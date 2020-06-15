@@ -16,7 +16,7 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/aws/aws-sdk-go/aws/defaults"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
@@ -128,12 +128,14 @@ func main() {
 		usageError("Error: Username is required")
 	}
 
+	sess := session.Must(session.NewSession())
+
 	if *region != "" {
-		defaults.DefaultConfig = defaults.DefaultConfig.WithRegion(*region).WithMaxRetries(10)
 		debug.Printf("Setting region: %s", *region)
+		sess.Config.Region = region
 	}
 
-	svc = s3.New(nil)
+	svc = s3.New(sess)
 
 	user := flag.Arg(0)
 
