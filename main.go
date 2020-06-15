@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -229,7 +230,7 @@ func printAuthorizedKeys(bucket, authorizedKeysPath, user string) {
 		for range resp.Contents {
 			_, err := io.Copy(os.Stdout, <-authorizedKeys)
 			if err != nil {
-				if err == syscall.EPIPE {
+				if errors.Is(err, syscall.EPIPE) {
 					// Expected error
 					return false
 				}
